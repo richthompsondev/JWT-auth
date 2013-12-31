@@ -1,6 +1,7 @@
 package com.example.demo.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.demo.service.CustomUserDetailService;
 
+@SuppressWarnings("deprecation")
 @Configuration
 @EnableWebSecurity
 public class JwtConfig extends WebSecurityConfigurerAdapter {
@@ -43,8 +45,8 @@ public class JwtConfig extends WebSecurityConfigurerAdapter {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 				
 	}
+	@Bean // So the object will be created
 	// To make sure our passwords is secured
-	@SuppressWarnings("deprecation")
 	public PasswordEncoder passwordEncoder() {
 		return NoOpPasswordEncoder.getInstance(); // Not use in production, just the make simple 4now
 	}
