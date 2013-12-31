@@ -6,6 +6,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.demo.service.CustomUserDetailService;
 
@@ -22,10 +25,28 @@ public class JwtConfig extends WebSecurityConfigurerAdapter {
 		auth.userDetailsService(customUserDetailService);
 	}
 
-	// Controls which endpoints are permitted and which are not permitted
+	// Controls which end-points are permitted and which are not permitted
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		super.configure(http);
+		// Configuration
+		http
+				.csrf()
+				.disable()
+				.cors()
+				.disable()
+				.authorizeRequests()
+				.antMatchers("/generateToken").permitAll()
+				// For any requests, authentication should be performed
+				.anyRequest().authenticated() 
+				.and()
+				// Every request should be independent of other and server doesn't have to manage session
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+				
+	}
+	// To make sure our passwords is secured
+	@SuppressWarnings("deprecation")
+	public PasswordEncoder passwordEncoder() {
+		return NoOpPasswordEncoder.getInstance(); // Not use in production, just the make simple 4now
 	}
 	
 }
