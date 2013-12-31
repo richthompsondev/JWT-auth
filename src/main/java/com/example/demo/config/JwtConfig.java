@@ -38,7 +38,7 @@ public class JwtConfig extends WebSecurityConfigurerAdapter {
 				.cors()
 				.disable()
 				.authorizeRequests()
-				.antMatchers("/generateToken").permitAll()
+				.antMatchers("/api/generateToken").permitAll()
 				// For any requests, authentication should be performed
 				.anyRequest().authenticated() 
 				.and()
@@ -52,6 +52,7 @@ public class JwtConfig extends WebSecurityConfigurerAdapter {
 		return NoOpPasswordEncoder.getInstance(); // Not use in production, just the make simple 4now
 	}
 	
+	@Bean
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
 	}

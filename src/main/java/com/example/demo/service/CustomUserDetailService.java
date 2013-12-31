@@ -17,7 +17,7 @@ public class CustomUserDetailService implements UserDetailsService {
 		// Can make a DB call with help of repository and do the validation
 		if(userName.equals("John")) {
 			// Assume these are returned from DB upon success
-			return new User("John", "password", new ArrayList<>());
+			return new User("John", "secret", new ArrayList<>());
 		}else {
 			throw new UsernameNotFoundException("User does not exist!");
 		}
