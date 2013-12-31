@@ -21,28 +21,28 @@ import com.example.demo.util.JwtUtil;
 // Call this filter only once per request
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-	
+
     @Autowired
     private CustomUserDetailService customUserDetailService;
     @Autowired
     private JwtUtil jwtUtil;
-	
-	// Get the JWT Token from request header
-	@Override
-	protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
-			throws ServletException, IOException {
-		// Validate that JWT Token
-		String bearerToken = httpServletRequest.getHeader("Authorization");
+
+    // Get the JWT Token from request header
+    @Override
+    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
+            throws ServletException, IOException {
+        // Validate that JWT Token
+        String bearerToken = httpServletRequest.getHeader("Authorization");
         String username = null;
         String token = null;
-		
-      // Check if Token exist or has Bearer text
-        if(bearerToken != null && bearerToken.startsWith("Bearer ")){
+
+        // Check if Token exist or has Bearer text
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
 
             // Extract JWT Token from bearerToken
             token = bearerToken.substring(7);
 
-            try{
+            try {
                 // Extract userName from the token
                 username = jwtUtil.extractUsername(token);
 
@@ -50,25 +50,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = customUserDetailService.loadUserByUsername(username);
 
                 // Security checks
-                if(username!=null && SecurityContextHolder.getContext().getAuthentication() == null){
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
                     UsernamePasswordAuthenticationToken upat = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     upat.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
 
                     SecurityContextHolder.getContext().setAuthentication(upat);
 
-                }else {
+                } else {
                     System.out.println("Invalid Token!!");
                 }
 
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }else {
+        } else {
             System.out.println("Invalid Bearer Token Format!!");
         }
 
-        // If all is well forward the filter request to the request end-point
+        // If all is well, forward the filter request to the request end-point
         filterChain.doFilter(httpServletRequest, httpServletResponse);
-	}
+    }
 }
