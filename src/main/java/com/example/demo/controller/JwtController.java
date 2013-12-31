@@ -20,28 +20,30 @@ import com.example.demo.util.JwtUtil;
 @RestController
 @RequestMapping("/api")
 public class JwtController {
-	
-	@Autowired
-	private AuthenticationManager authenticationManager;
-	
-	@Autowired
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
     private CustomUserDetailService customUserDetailService;
 
     @Autowired
     private JwtUtil jwtUtil;
-	
-	@PostMapping("/generateToken")
-	public ResponseEntity<JwtResponse> generateToken(@RequestBody JwtRequest jwtResquest){
-		// Authenticate the user
-		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtResquest.getUserName(), jwtResquest.getPassword()));
-		
-		UserDetails userDetails = customUserDetailService.loadUserByUsername(jwtResquest.getUserName());
-		
-		String jwtToken = jwtUtil.generateToken(userDetails);
-		
-		JwtResponse jwtResponse = new JwtResponse(jwtToken);
-		
-		//return ResponseEntity.ok(jwtResponse);
-		return new ResponseEntity<JwtResponse>(jwtResponse, HttpStatus.OK);
-	}
+
+    @PostMapping("/generateToken")
+    public ResponseEntity<JwtResponse> generateToken(@RequestBody JwtRequest jwtRequest) {
+
+        UsernamePasswordAuthenticationToken upat = new UsernamePasswordAuthenticationToken(jwtRequest.getUserName(), jwtRequest.getPassword());
+        // Authenticate the user
+        authenticationManager.authenticate(upat);
+
+        UserDetails userDetails = customUserDetailService.loadUserByUsername(jwtRequest.getUserName());
+
+        String jwtToken = jwtUtil.generateToken(userDetails);
+
+        JwtResponse jwtResponse = new JwtResponse(jwtToken);
+
+        //return ResponseEntity.ok(jwtResponse);
+        return new ResponseEntity<JwtResponse>(jwtResponse, HttpStatus.OK);
+    }
 }
